@@ -2,20 +2,19 @@
 
 # Countdown Timer for VS Code
 
-A simple countdown timer extension for Visual Studio Code that displays the time in the status bar and allows you to restart and pause the timer.
+A versatile countdown timer extension for Visual Studio Code that displays time in the status bar and offers intuitive controls for managing your work sessions.
 
 ## Features
 
--   Displays the time in the status bar in the format "hh:mm:ss"
--   Includes a restart icon and a countdown button in the status bar
--   Clicking the countdown button toggles play/pause the current time
--   Clicking the restart button restarts the current countdown
--   Allows you to set the time in minutes through a menu item
--   Continues counting up after the countdown hits zero
+-   Displays time in the status bar in "hh:mm:ss" format
+-   Intuitive controls: play/pause and restart buttons in the status bar
+-   Set custom countdown duration through a menu item
+-   Continues counting up after reaching zero
+-   Persists timer state across VS Code sessions
 
 ## Requirements
 
-This extension requires Visual Studio Code version 1.60.0 or higher.
+-   Visual Studio Code version 1.60.0 or higher
 
 ## Installation
 
@@ -26,50 +25,57 @@ This extension requires Visual Studio Code version 1.60.0 or higher.
 
 ## Usage
 
-1. Click on the Countdown Timer icon in the status bar
-2. Set the time in minutes through the menu item
-3. Click the countdown button to start the timer
-4. Click the restart button to restart the timer
-5. Click the countdown button again to pause the timer
+1. Click the Countdown Timer icon in the status bar
+2. Set the desired time in minutes through the menu item
+3. Use the play/pause button to control the timer
+4. Click the restart button to reset the timer
+5. Timer state persists even when VS Code is closed and reopened
 
 ## Extension Settings
 
 This extension contributes the following settings:
 
--   `countdownTimer.time`: Set the time in minutes for the countdown timer (default: 10)
+-   `countdownTimer.time`: Set the default time in minutes for the countdown timer (default: 25)
+-   `countdownTimer.autoStart`: Automatically start the timer when VS Code opens (default: false)
 
 ## Known Issues
 
--   None currently reported
+-   None currently reported. If you encounter any issues, please report them on our GitHub repository.
 
 ## Roadmap
 
 Future plans for Countdown Timer include:
 
--   [ ] Add more customization options for the timer
--   [ ] Allow multiple timers to be set
--   [ ] Integrate with other VS Code extensions
+-   [ ] Multiple simultaneous timers
+-   [ ] Customizable alert sounds and notifications
+-   [ ] Integration with VS Code's task system
+-   [ ] Pomodoro technique support
 
 ## Contributing
 
-If you have suggestions for improvements or bug fixes, please feel free to contribute! Here's how:
+We welcome contributions! Here's how you can help:
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-Before submitting your pull request, please make sure your changes are consistent with the project's coding style and that all tests pass.
+Please ensure your code adheres to our coding standards and passes all tests before submitting a PR.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Support
 
-If you encounter any problems or have any suggestions for improvements, please [open an issue](https://github.com/your-username/countdown-timer/issues) on our GitHub repository.
+If you encounter any problems or have suggestions for improvements, please [open an issue](https://github.com/your-username/countdown-timer/issues) on our GitHub repository.
+
+## Acknowledgements
+
+-   Thanks to all contributors who have helped shape this extension
+-   Inspired by the Pomodoro Technique and other time management methods
 
 ---
 
-**Enjoy your new Countdown Timer!**
+**Boost your productivity with Countdown Timer for VS Code!**

@@ -2,34 +2,59 @@ import * as vscode from 'vscode';
 
 let countdownStatusBarItem: vscode.StatusBarItem;
 let restartStatusBarItem: vscode.StatusBarItem;
+let setTimeStatusBarItem: vscode.StatusBarItem;
 let countdownInterval: NodeJS.Timeout | undefined;
-let totalSeconds: number = 0;
+let totalSeconds: number = 10 * 60; // Default 10 minutes
 let isRunning: boolean = false;
+let totalTime: number;
 
 export function activate(context: vscode.ExtensionContext) {
+	// Retrieve stored time or use defaulttotalSeconds = context.globalState.get('countdownTime', 10 * 60);
+	totalTime = totalSeconds; // Set the total time
+	totalSeconds = context.globalState.get('countdownTime', 10 * 60);
+
+	// Store the initial time if it's not already stored
+	if (!context.globalState.get('countdownTime')) {
+		context.globalState.update('countdownTime', totalSeconds);
+	}
+
 	// Create countdown status bar item
 	countdownStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-	countdownStatusBarItem.command = 'countdown.togglePlayPause';
+	countdownStatusBarItem.command = 'vscode-countdown-timer.togglePlayPause';
 	context.subscriptions.push(countdownStatusBarItem);
 
+	// Create set time status bar item
+	setTimeStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+	setTimeStatusBarItem.text = "$(watch)"; // Clock icon
+	setTimeStatusBarItem.tooltip = "Set Time";
+	setTimeStatusBarItem.command = "vscode-countdown-timer.setTime";
+
 	// Create restart status bar item
-	restartStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 101);
+	restartStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
 	restartStatusBarItem.text = '$(sync)';
-	restartStatusBarItem.command = 'countdown.restart';
-	restartStatusBarItem.tooltip = 'Restart Countdown';
+	restartStatusBarItem.command = 'vscode-countdown-timer.restart';
+	restartStatusBarItem.tooltip = 'Reset Countdown';
 	context.subscriptions.push(restartStatusBarItem);
+	context.subscriptions.push(setTimeStatusBarItem);
 
 	// Register commands
-	let setTimeCommand = vscode.commands.registerCommand('countdown.setTime', setCountdownTime);
-	let restartCommand = vscode.commands.registerCommand('countdown.restart', restartCountdown);
-	let togglePlayPauseCommand = vscode.commands.registerCommand('countdown.togglePlayPause', togglePlayPause);
+	// let setTimeDisposable = vscode.commands.registerCommand('vscode-countdown-timer.setCountdownTime', () => {
+	// 	setCountdownTime(context);
+	// });
+	let setTimeCommand = vscode.commands.registerCommand('vscode-countdown-timer.setTime', () => setCountdownTime(context));
+	let restartCommand = vscode.commands.registerCommand('vscode-countdown-timer.restart', () => restartCountdown(context));
+	let togglePlayPauseCommand = vscode.commands.registerCommand('vscode-countdown-timer.togglePlayPause', togglePlayPause);
 
 	context.subscriptions.push(setTimeCommand, restartCommand, togglePlayPauseCommand);
 
+	// Update and show status bar items immediately
 	updateStatusBar();
+	countdownStatusBarItem.show();
+	restartStatusBarItem.show();
+	setTimeStatusBarItem.show();
 }
 
-function setCountdownTime() {
+function setCountdownTime(context: vscode.ExtensionContext) {
 	vscode.window.showInputBox({
 		prompt: 'Enter countdown time in minutes',
 		validateInput: (value) => {
@@ -41,14 +66,17 @@ function setCountdownTime() {
 	}).then(value => {
 		if (value) {
 			totalSeconds = parseInt(value) * 60;
+			totalTime = totalSeconds;
+			context.globalState.update('countdownTime', totalSeconds);
 			updateStatusBar();
 		}
 	});
 }
 
-function restartCountdown() {
+function restartCountdown(context: vscode.ExtensionContext) {
 	clearInterval(countdownInterval);
 	isRunning = false;
+	totalSeconds = context.globalState.get('countdownTime', 10 * 60);
 	updateStatusBar();
 }
 
@@ -74,17 +102,43 @@ function updateStatusBar() {
 	let minutes = Math.floor((Math.abs(totalSeconds) % 3600) / 60);
 	let seconds = Math.abs(totalSeconds) % 60;
 
-	let timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+	let timeString;
+	if (hours > 0) {
+		timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+	} else {
+		timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+	}
+
 	if (totalSeconds < 0) {
 		timeString = '-' + timeString;
 	}
 
+	// Color coding based on percentage of total time
+	const percentageRemaining = (totalSeconds / totalTime) * 100;
+
+	let color;
+	if (percentageRemaining > 50) {
+		color = new vscode.ThemeColor('statusBarItem.prominentForeground');
+	} else if (percentageRemaining > 20) {
+		color = new vscode.ThemeColor('statusBarItem.warningForeground');
+	} else {
+		color = new vscode.ThemeColor('statusBarItem.errorForeground');
+	}
+
 	countdownStatusBarItem.text = `$(clock) ${timeString}`;
+	countdownStatusBarItem.color = color;
 	countdownStatusBarItem.tooltip = isRunning ? 'Pause' : 'Play';
-	countdownStatusBarItem.show();
-	restartStatusBarItem.show();
 }
 
 export function deactivate() {
 	clearInterval(countdownInterval);
+	if (countdownStatusBarItem) {
+		countdownStatusBarItem.dispose();
+	}
+	if (restartStatusBarItem) {
+		restartStatusBarItem.dispose();
+	}
+	if (setTimeStatusBarItem) {
+		setTimeStatusBarItem.dispose();
+	}
 }

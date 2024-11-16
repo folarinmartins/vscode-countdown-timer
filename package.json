@@ -2,7 +2,7 @@
   "name": "vscode-countdown-timer",
   "displayName": "VS Code Countdown Timer",
   "description": "A countdown timer extension for VS Code",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "icon": "resources/makethefuture.png",
   "publisher": "mfolarin",
   "engines": {
@@ -11,7 +11,9 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
