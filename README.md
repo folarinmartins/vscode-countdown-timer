@@ -12,6 +12,8 @@ A versatile countdown timer extension for Visual Studio Code that displays time 
 -   Continues counting up after reaching zero
 -   Persists timer state across VS Code sessions
 
+![Countdown Timer in action](images/timer.png)
+
 ## Requirements
 
 -   Visual Studio Code version 1.60.0 or higher
