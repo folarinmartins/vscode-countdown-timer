@@ -1,8 +1,10 @@
 {
   "name": "vscode-countdown-timer",
-  "displayName": "vscode-countdown-timer",
-  "description": "Countdown timer for Visual Code",
+  "displayName": "VS Code Countdown Timer",
+  "description": "A countdown timer extension for VS Code",
   "version": "0.0.1",
+  "icon": "resources/makethefuture.png",
+  "publisher": "mfolarin",
   "engines": {
     "vscode": "^1.95.0"
   },
@@ -14,10 +16,26 @@
   "contributes": {
     "commands": [
       {
-        "command": "vscode-countdown-timer.helloWorld",
-        "title": "Hello World"
+        "command": "vscode-countdown-timer.setTime",
+        "title": "Set Countdown Time"
+      },
+      {
+        "command": "vscode-countdown-timer.restart",
+        "title": "Restart Countdown"
+      },
+      {
+        "command": "vscode-countdown-timer.togglePlayPause",
+        "title": "Toggle Countdown Play/Pause"
       }
-    ]
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "vscode-countdown-timer.setTime",
+          "group": "Countdown Timer"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -37,5 +55,20 @@
     "typescript": "^5.6.2",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1"
-  }
+  },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    },
+    "virtualWorkspaces": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/folarinmartins/vscode-countdown-timer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/folarinmartins/vscode-countdown-timer/issues"
+  },
+  "homepage": "https://github.com/folarinmartins/vscode-countdown-timer#readme",
+  "license": "MIT"
 }

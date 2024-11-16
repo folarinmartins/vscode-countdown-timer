@@ -1,26 +1,90 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
+let countdownStatusBarItem: vscode.StatusBarItem;
+let restartStatusBarItem: vscode.StatusBarItem;
+let countdownInterval: NodeJS.Timeout | undefined;
+let totalSeconds: number = 0;
+let isRunning: boolean = false;
+
 export function activate(context: vscode.ExtensionContext) {
+	// Create countdown status bar item
+	countdownStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+	countdownStatusBarItem.command = 'countdown.togglePlayPause';
+	context.subscriptions.push(countdownStatusBarItem);
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "vscode-countdown-timer" is now active!');
+	// Create restart status bar item
+	restartStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 101);
+	restartStatusBarItem.text = '$(sync)';
+	restartStatusBarItem.command = 'countdown.restart';
+	restartStatusBarItem.tooltip = 'Restart Countdown';
+	context.subscriptions.push(restartStatusBarItem);
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('vscode-countdown-timer.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from vscode-countdown-timer!');
-	});
+	// Register commands
+	let setTimeCommand = vscode.commands.registerCommand('countdown.setTime', setCountdownTime);
+	let restartCommand = vscode.commands.registerCommand('countdown.restart', restartCountdown);
+	let togglePlayPauseCommand = vscode.commands.registerCommand('countdown.togglePlayPause', togglePlayPause);
 
-	context.subscriptions.push(disposable);
+	context.subscriptions.push(setTimeCommand, restartCommand, togglePlayPauseCommand);
+
+	updateStatusBar();
 }
 
-// This method is called when your extension is deactivated
-export function deactivate() {}
+function setCountdownTime() {
+	vscode.window.showInputBox({
+		prompt: 'Enter countdown time in minutes',
+		validateInput: (value) => {
+			if (!/^\d+$/.test(value)) {
+				return 'Please enter a valid number';
+			}
+			return null;
+		}
+	}).then(value => {
+		if (value) {
+			totalSeconds = parseInt(value) * 60;
+			updateStatusBar();
+		}
+	});
+}
+
+function restartCountdown() {
+	clearInterval(countdownInterval);
+	isRunning = false;
+	updateStatusBar();
+}
+
+function togglePlayPause() {
+	isRunning = !isRunning;
+	if (isRunning) {
+		startCountdown();
+	} else {
+		clearInterval(countdownInterval);
+	}
+	updateStatusBar();
+}
+
+function startCountdown() {
+	countdownInterval = setInterval(() => {
+		totalSeconds--;
+		updateStatusBar();
+	}, 1000);
+}
+
+function updateStatusBar() {
+	let hours = Math.floor(Math.abs(totalSeconds) / 3600);
+	let minutes = Math.floor((Math.abs(totalSeconds) % 3600) / 60);
+	let seconds = Math.abs(totalSeconds) % 60;
+
+	let timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+	if (totalSeconds < 0) {
+		timeString = '-' + timeString;
+	}
+
+	countdownStatusBarItem.text = `$(clock) ${timeString}`;
+	countdownStatusBarItem.tooltip = isRunning ? 'Pause' : 'Play';
+	countdownStatusBarItem.show();
+	restartStatusBarItem.show();
+}
+
+export function deactivate() {
+	clearInterval(countdownInterval);
+}
