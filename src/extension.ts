@@ -48,10 +48,18 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(setTimeCommand, restartCommand, togglePlayPauseCommand);
 	// Add configuration change listener
+	// In the activate function, replace the existing configuration change listener with this:
 	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => {
 		if (e.affectsConfiguration('vscode-countdown-timer.alignment')) {
-			// Reload the window to apply the new alignment
-			vscode.commands.executeCommand('workbench.action.reloadWindow');
+			vscode.window.showInformationMessage(
+				'Countdown Timer alignment has changed. Reload window to apply changes?',
+				'Reload',
+				'Later'
+			).then(selection => {
+				if (selection === 'Reload') {
+					vscode.commands.executeCommand('workbench.action.reloadWindow');
+				}
+			});
 		}
 	}));
 
