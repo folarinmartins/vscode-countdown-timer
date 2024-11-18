@@ -15,6 +15,11 @@ All notable changes to the "countdown-timer" extension will be documented in thi
 -   [Planned] Develop keyboard shortcuts for quick timer control
 -   [Planned] Improve UI for setting timer duration
 
+## [1.1.2] - 2024-11-18
+
+-   [Fix] Improved user experience to obtain consent before reloading window after alignment configuration change
+-   [Fix] Corrected version minor number due to previous release
+
 ## [1.0.1] - 2024-11-18
 
 -   [Added] Configuration item for setting the alignment of the status bar item
