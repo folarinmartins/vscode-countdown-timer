@@ -15,6 +15,10 @@ All notable changes to the "countdown-timer" extension will be documented in thi
 -   [Planned] Develop keyboard shortcuts for quick timer control
 -   [Planned] Improve UI for setting timer duration
 
+## [1.0.1] - 2024-11-18
+
+-   [Added] Configuration item for setting the alignment of the status bar item
+
 ## [1.0.0] - 2024-11-16
 
 -   [Added] Initial release of Countdown Timer

@@ -2,7 +2,7 @@
   "name": "vscode-countdown-timer",
   "displayName": "VS Code Countdown Timer",
   "description": "A countdown timer extension for VS Code",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "icon": "resources/makethefuture.png",
   "publisher": "mfolarin",
   "engines": {
@@ -37,6 +37,20 @@
           "group": "Countdown Timer"
         }
       ]
+    },
+    "configuration": {
+      "title": "VS Code Countdown Timer",
+      "properties": {
+        "vscode-countdown-timer.alignment": {
+          "type": "string",
+          "enum": [
+            "left",
+            "right"
+          ],
+          "default": "right",
+          "description": "Align the countdown timer items to the left or right of the status bar"
+        }
+      }
     }
   },
   "scripts": {

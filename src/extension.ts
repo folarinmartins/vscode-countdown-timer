@@ -18,19 +18,23 @@ export function activate(context: vscode.ExtensionContext) {
 		context.globalState.update('countdownTime', totalSeconds);
 	}
 
+	// Get the alignment setting
+	const config = vscode.workspace.getConfiguration('vscode-countdown-timer');
+	const alignment = config.get('alignment') === 'left' ? vscode.StatusBarAlignment.Left : vscode.StatusBarAlignment.Right;
+
 	// Create countdown status bar item
-	countdownStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+	countdownStatusBarItem = vscode.window.createStatusBarItem(alignment, 100);
 	countdownStatusBarItem.command = 'vscode-countdown-timer.togglePlayPause';
 	context.subscriptions.push(countdownStatusBarItem);
 
 	// Create set time status bar item
-	setTimeStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+	setTimeStatusBarItem = vscode.window.createStatusBarItem(alignment, 100);
 	setTimeStatusBarItem.text = "$(watch)"; // Clock icon
 	setTimeStatusBarItem.tooltip = "Set Time";
 	setTimeStatusBarItem.command = "vscode-countdown-timer.setTime";
 
 	// Create restart status bar item
-	restartStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+	restartStatusBarItem = vscode.window.createStatusBarItem(alignment, 100);
 	restartStatusBarItem.text = '$(sync)';
 	restartStatusBarItem.command = 'vscode-countdown-timer.restart';
 	restartStatusBarItem.tooltip = 'Reset Countdown';
@@ -38,14 +42,18 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(setTimeStatusBarItem);
 
 	// Register commands
-	// let setTimeDisposable = vscode.commands.registerCommand('vscode-countdown-timer.setCountdownTime', () => {
-	// 	setCountdownTime(context);
-	// });
 	let setTimeCommand = vscode.commands.registerCommand('vscode-countdown-timer.setTime', () => setCountdownTime(context));
 	let restartCommand = vscode.commands.registerCommand('vscode-countdown-timer.restart', () => restartCountdown(context));
 	let togglePlayPauseCommand = vscode.commands.registerCommand('vscode-countdown-timer.togglePlayPause', togglePlayPause);
 
 	context.subscriptions.push(setTimeCommand, restartCommand, togglePlayPauseCommand);
+	// Add configuration change listener
+	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => {
+		if (e.affectsConfiguration('vscode-countdown-timer.alignment')) {
+			// Reload the window to apply the new alignment
+			vscode.commands.executeCommand('workbench.action.reloadWindow');
+		}
+	}));
 
 	// Update and show status bar items immediately
 	updateStatusBar();
